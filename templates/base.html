@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Python Cheat Sheet{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='pygments.css') }}">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <a class="sidebar-logo" href="{{ url_for('index') }}">
+                <span class="sidebar-logo-icon">🐍</span>
+                <span class="sidebar-logo-text">Python<br>Cheat Sheet</span>
+            </a>
+
+            <nav class="sidebar-nav">
+                <details class="nav-group" {% if unit or (not unit and not category) %}open{% endif %}>
+                    <summary class="sidebar-heading">Units</summary>
+                    <ul class="unit-list">
+                        {% for u in units %}
+                        <li>
+                            <a class="unit-link {% if unit and unit.slug == u.slug %}active{% endif %}"
+                               href="{{ url_for('unit_detail', slug=u.slug) }}">
+                                <span class="unit-number">{{ "%02d"|format(u.number) }}</span>
+                                <span class="unit-title">{{ u.title }}</span>
+                                {% if unit and unit.slug == u.slug %}<span class="unit-arrow">→</span>{% endif %}
+                            </a>
+                            {% if unit and unit.slug == u.slug %}
+                            <ul class="module-list">
+                                {% for m in u.modules %}
+                                <li><a href="#{{ m.slug }}">{{ m.title }}</a></li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </details>
+
+                <details class="nav-group" {% if category or (not unit and not category) %}open{% endif %}>
+                    <summary class="sidebar-heading">Interview Questions</summary>
+                    <ul class="unit-list">
+                        {% for c in categories %}
+                        <li>
+                            <a class="unit-link {% if category and category.slug == c.slug %}active{% endif %}"
+                               href="{{ url_for('category_detail', slug=c.slug) }}">
+                                <span class="unit-number">{{ "%02d"|format(c.number) }}</span>
+                                <span class="unit-title">{{ c.title }}</span>
+                                {% if category and category.slug == c.slug %}<span class="unit-arrow">→</span>{% endif %}
+                            </a>
+                            {% if category and category.slug == c.slug %}
+                            <ul class="module-list">
+                                {% if c.exercises %}
+                                    {% for e in c.exercises %}
+                                    <li>
+                                        <a href="#{{ e.slug }}">{{ e.title }}</a>
+                                        {% if e.difficulty %}<span class="difficulty-tag difficulty-{{ e.difficulty|lower }}">{{ e.difficulty }}</span>{% endif %}
+                                    </li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li class="module-list-empty">No exercises yet</li>
+                                {% endif %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </details>
+            </nav>
+        </aside>
+
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

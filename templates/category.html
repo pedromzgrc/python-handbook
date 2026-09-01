@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.title }} · Interview Questions{% endblock %}
+
+{% block content %}
+<article class="unit-article">
+    <p class="unit-eyebrow">Interview Questions · {{ "%02d"|format(category.number) }}</p>
+    <h1>{{ category.title }}</h1>
+
+    {% if category.exercises %}
+    <div class="markdown-body">
+        {{ content_html | safe }}
+    </div>
+    {% else %}
+    <p class="empty-state">No exercises added yet for this category — check back soon.</p>
+    {% endif %}
+</article>
+{% endblock %}

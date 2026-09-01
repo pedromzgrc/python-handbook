@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}{{ unit.title }} · Python Cheat Sheet{% endblock %}
+
+{% block content %}
+<article class="unit-article">
+    <p class="unit-eyebrow">Unit {{ "%02d"|format(unit.number) }}</p>
+    <h1>{{ unit.title }}</h1>
+
+    <div class="markdown-body">
+        {{ content_html | safe }}
+    </div>
+</article>
+{% endblock %}

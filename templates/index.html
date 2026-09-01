@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Python Cheat Sheet{% endblock %}
+
+{% block content %}
+<article class="unit-article">
+    <p class="unit-eyebrow">Welcome</p>
+    <h1>Python Interview Prep Cheat Sheet</h1>
+    <p>Pick a unit from the sidebar to see its modules: a short explanation
+    followed by a working code snippet for each concept.</p>
+
+    <ul class="index-grid">
+        {% for u in units %}
+        <li>
+            <a class="index-card" href="{{ url_for('unit_detail', slug=u.slug) }}">
+                <span class="index-card-number">{{ "%02d"|format(u.number) }}</span>
+                <span class="index-card-title">{{ u.title }}</span>
+                <span class="index-card-count">{{ u.modules|length }} modules</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <h2 class="index-section-heading">Interview Questions</h2>
+    <p>Practice exercises grouped by topic, with a problem statement,
+    solution, and explanation for each one once added.</p>
+
+    <ul class="index-grid">
+        {% for c in categories %}
+        <li>
+            <a class="index-card" href="{{ url_for('category_detail', slug=c.slug) }}">
+                <span class="index-card-number">{{ "%02d"|format(c.number) }}</span>
+                <span class="index-card-title">{{ c.title }}</span>
+                <span class="index-card-count">
+                    {{ c.exercises|length }} exercise{{ "s" if c.exercises|length != 1 else "" }}
+                </span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</article>
+{% endblock %}
