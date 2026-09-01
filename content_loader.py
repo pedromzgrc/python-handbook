@@ -1,11 +1,11 @@
-"""Parses the numbered chapter .py files into structured content the
-Flask app can render, so the cheat sheet content lives in one place: the
-Python files themselves.
+"""Parses the numbered chapter .py files in units/ into structured content
+the Flask app can render, so the cheat sheet content lives in one place:
+the Python files themselves.
 """
 import re
 from pathlib import Path
 
-CONTENT_DIR = Path(__file__).parent
+CONTENT_DIR = Path(__file__).parent / "units"
 CHAPTER_FILE_PATTERN = re.compile(r"^(\d+)_(.+)\.py$")
 CHAPTER_TITLE_PATTERN = re.compile(r"^#\s*Chapter\s*\d+:\s*(.+)$")
 MODULE_HEADER_PATTERN = re.compile(r"^#\s*---\s*(.+?)\s*---\s*$")
@@ -60,8 +60,8 @@ def _parse_modules(body_lines):
 
 
 def load_units():
-    """Reads every NN_name.py file in the project root and returns a list
-    of unit dicts, ordered by their numeric prefix."""
+    """Reads every NN_name.py file in units/ and returns a list of unit
+    dicts, ordered by their numeric prefix."""
     units = []
     for path in sorted(CONTENT_DIR.glob("*.py")):
         match = CHAPTER_FILE_PATTERN.match(path.name)

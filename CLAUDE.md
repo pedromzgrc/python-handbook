@@ -22,9 +22,10 @@ runs on 5001 to avoid the conflict; see the comment above `app.run()`).
 Dependencies (Flask, Markdown, Pygments) live in `.venv/`, pinned in
 `requirements.txt`.
 
-## Content type 1: Chapters (the numbered root files)
+## Content type 1: Chapters (units/)
 
-Files: `01_basics.py`, `02_control_flow.py`, ... `08_fetching_data.py`
+Files: `units/01_basics.py`, `units/02_control_flow.py`, ...
+`units/08_fetching_data.py`
 Loader: `content_loader.py` → `load_units()`
 Route: `/unit/<slug>`
 
@@ -51,7 +52,7 @@ print(some_code)
   a comment sitting above the code, not as a second paragraph. Keep
   the essential point in line 1.
 - A new chapter file needs a numeric prefix one higher than the last
-  (`09_...py`) — `content_loader.py` globs `*.py` in the project root
+  (`units/09_...py`) — `content_loader.py` globs `*.py` inside `units/`
   and orders by that prefix. It also needs an entry point in the
   sidebar automatically (the sidebar just iterates `load_units()`), so
   no template changes are needed to add a chapter or a module.

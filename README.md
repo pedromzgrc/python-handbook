@@ -29,18 +29,18 @@ a `.py` file.
 
 ```
 app.py                     Flask routes + Markdown rendering
-content_loader.py          Parses chapter files (01_*.py ... 08_*.py) -> load_units()
+content_loader.py          Parses units/*.py -> load_units()
 interview_loader.py        Parses interview_questions/*.py -> load_categories()
-01_basics.py ... 08_fetching_data.py    Chapter content, in reading order
+units/                     One file per chapter (01_basics.py ... 08_fetching_data.py)
 interview_questions/       One file per interview-question category (18 total)
 templates/                 base.html (sidebar shell) + index/unit/category pages
 static/                    style.css (hand-written) + pygments.css (generated)
 requirements.txt           Flask, Markdown, Pygments (installed into .venv/)
 ```
 
-- **Chapters** are globbed by numeric filename prefix in the project
-  root — `content_loader.py` orders them `01_`, `02_`, ... and the
-  sidebar just iterates whatever `load_units()` returns.
+- **Chapters** live under `units/`, globbed by numeric filename prefix
+  — `content_loader.py` orders them `01_`, `02_`, ... and the sidebar
+  just iterates whatever `load_units()` returns.
 - **Interview categories** live under `interview_questions/`, one file
   per topic, also ordered by numeric prefix.
 - Both content types show up in the sidebar automatically. Adding a
@@ -69,8 +69,8 @@ pick the right one.
 
 ### Adding/editing a chapter (general Python topics)
 
-Edit one of the root `NN_name.py` files, or add a new one with the
-next numeric prefix (e.g. `09_something.py`).
+Edit one of the `units/NN_name.py` files, or add a new one with the
+next numeric prefix (e.g. `units/09_something.py`).
 
 ```python
 # Chapter N: Title
