@@ -1,7 +1,7 @@
 """Parses the interview-question category files (interview_questions/) into
 structured content: each category (e.g. "Arrays and Hashing") holds a list
-of exercises, each with a problem statement, a hint, a solution, and an
-explanation.
+of exercises, each with a problem statement, a hint, one or more solutions,
+and an explanation.
 
 Exercise blocks look like this:
 
@@ -30,6 +30,26 @@ it, code right after "@problem" or "@hint" would be swallowed into that
 section's text instead of becoming the code block. "@hint" is optional. A
 category file with no "# --- Title ---" blocks simply has no exercises
 yet.
+
+An exercise can offer more than one way to write the same solution — e.g.
+a plain-Python "Junior" version next to a terser "Senior" one — by giving
+"@solution" a ":label" suffix and repeating the marker:
+
+    # @solution:Junior
+
+    def two_sum(nums, target):
+        ...  # written the long way
+
+    # @solution:Senior
+
+    def two_sum(nums, target):
+        ...  # same approach, shorter syntax
+
+Each labelled block becomes its own tab in the rendered page (see
+render_category_markdown / _render_solution_body in app.py). A plain
+"@solution" with no label still works exactly as before and renders as a
+single, un-tabbed code block — labels are opt-in, only needed when an
+exercise wants to show more than one style side by side.
 """
 import re
 from pathlib import Path
@@ -39,7 +59,9 @@ CATEGORY_FILE_PATTERN = re.compile(r"^(\d+)_(.+)\.py$")
 CATEGORY_TITLE_PATTERN = re.compile(r"^#\s*Category:\s*(.+)$")
 EXERCISE_HEADER_PATTERN = re.compile(r"^#\s*---\s*(.+?)\s*---\s*$")
 DIFFICULTY_PATTERN = re.compile(r"^#\s*Difficulty:\s*(.+)$")
-SECTION_MARKER_PATTERN = re.compile(r"^#\s*@(problem|hint|solution|explanation)\s*$")
+SECTION_MARKER_PATTERN = re.compile(
+    r"^#\s*@(problem|hint|solution|explanation)(?::([^\s]+))?\s*$"
+)
 
 
 def _slugify(name: str) -> str:
@@ -77,8 +99,9 @@ def _parse_exercises(body_lines):
     def flush():
         if current_title is None:
             return
-        sections = {"problem": [], "hint": [], "solution": [], "explanation": []}
-        section = "solution"
+        sections = {"problem": [], "hint": [], "explanation": []}
+        solutions = {}  # label ("" if unlabelled) -> code lines, insertion order
+        section_kind, section_label = "solution", ""
         difficulty = ""
         for line in current_lines:
             stripped = line.strip()
@@ -88,9 +111,24 @@ def _parse_exercises(body_lines):
                 continue
             marker = SECTION_MARKER_PATTERN.match(stripped)
             if marker:
-                section = marker.group(1)
+                section_kind = marker.group(1)
+                section_label = marker.group(2) or ""
+                if section_kind == "solution":
+                    solutions.setdefault(section_label, [])
                 continue
-            sections[section].append(line)
+            if section_kind == "solution":
+                solutions.setdefault(section_label, []).append(line)
+            else:
+                sections[section_kind].append(line)
+
+        solution_list = [
+            {
+                "label": label,
+                "slug": label.lower(),
+                "code": "\n".join(_trim_blank_lines(lines)),
+            }
+            for label, lines in solutions.items()
+        ] or [{"label": "", "slug": "", "code": ""}]
 
         exercises.append(
             {
@@ -99,7 +137,8 @@ def _parse_exercises(body_lines):
                 "difficulty": difficulty,
                 "problem": _prose(sections["problem"]),
                 "hint": _prose(sections["hint"]),
-                "code": "\n".join(_trim_blank_lines(sections["solution"])),
+                "solutions": solution_list,
+                "code": solution_list[0]["code"],
                 "explanation": _prose(sections["explanation"]),
             }
         )

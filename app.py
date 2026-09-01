@@ -36,11 +36,54 @@ def _render_markdown(document):
     )
 
 
+def _render_solution_body(exercise):
+    """Builds the HTML that goes inside the <details> solution wrapper.
+    Most exercises have a single @solution and render as one code block,
+    same as before. An exercise that defines more than one @solution:<label>
+    (e.g. "Junior" vs "Senior" — same optimal approach, different coding
+    style) renders as CSS-only tabs instead: radio inputs + labels toggle
+    which .tab-panel is visible via :checked, no JS involved."""
+    solutions = [s for s in exercise["solutions"] if s["code"]]
+
+    if len(solutions) <= 1:
+        parts = []
+        if exercise["code"]:
+            parts.append(f"```python\n{exercise['code']}\n```")
+        if exercise["explanation"]:
+            parts.append(f"**Explanation:** {exercise['explanation']}")
+        return _render_markdown("\n\n".join(parts)) if parts else ""
+
+    inputs_and_labels = []
+    panels = []
+    for index, solution in enumerate(solutions):
+        input_id = f"tab-{exercise['slug']}-{solution['slug']}"
+        code_html = _render_markdown(f"```python\n{solution['code']}\n```")
+        checked = " checked" if index == 0 else ""
+        inputs_and_labels.append(
+            f'<input type="radio" name="tabs-{exercise["slug"]}" id="{input_id}" '
+            f'class="tab-input"{checked}>'
+            f'<label for="{input_id}" class="tab-label">{solution["label"]}</label>'
+        )
+        panels.append(f'<div class="tab-panel">{code_html}</div>')
+
+    tabs_html = (
+        '<div class="solution-tabs">'
+        + "".join(inputs_and_labels)
+        + '<div class="tab-panels">'
+        + "".join(panels)
+        + "</div></div>"
+    )
+    if exercise["explanation"]:
+        tabs_html += _render_markdown(f"**Explanation:** {exercise['explanation']}")
+    return tabs_html
+
+
 def render_category_markdown(category):
     """Builds the HTML for a category's exercises: problem statement and
-    hint are always visible; the solution code and explanation are
-    rendered separately and wrapped in a <details> element so they stay
-    hidden (native HTML, no JS) until the reader clicks "Show solution"."""
+    hint are always visible; the solution (or solutions, if tabbed) and
+    explanation are rendered separately and wrapped in a <details> element
+    so they stay hidden (native HTML, no JS) until the reader clicks "Show
+    solution"."""
     blocks = []
     for exercise in category["exercises"]:
         prose_parts = [f"## {exercise['title']} {{: #{exercise['slug']} }}"]
@@ -52,20 +95,15 @@ def render_category_markdown(category):
             prose_parts.append(f"> **Hint:** {exercise['hint']}")
         block = _render_markdown("\n\n".join(prose_parts))
 
-        solution_parts = []
-        if exercise["code"]:
-            solution_parts.append(f"```python\n{exercise['code']}\n```")
-        if exercise["explanation"]:
-            solution_parts.append(f"**Explanation:** {exercise['explanation']}")
-        if solution_parts:
-            solution_html = _render_markdown("\n\n".join(solution_parts))
+        solution_body = _render_solution_body(exercise)
+        if solution_body:
             block += (
                 '<details class="solution-toggle">'
                 "<summary>"
                 '<span class="show-label">Show solution</span>'
                 '<span class="hide-label">Hide solution</span>'
                 "</summary>"
-                f'<div class="solution-body">{solution_html}</div>'
+                f'<div class="solution-body">{solution_body}</div>'
                 "</details>"
             )
         blocks.append(block)

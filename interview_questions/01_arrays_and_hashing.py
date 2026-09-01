@@ -101,3 +101,74 @@ def is_valid_sudoku(board):
 # duplicate and the board is invalid, so we return False immediately.
 # Otherwise we add the value to all three sets and keep going. If we
 # get through every cell with no duplicates, the board is valid.
+
+# --- Two Sum ---
+# Difficulty: Easy
+# @problem
+# Given an array of integers nums and an integer target, return the
+# indices i and j such that nums[i] + nums[j] == target and i != j.
+#
+# You may assume that every input has exactly one pair of indices i
+# and j that satisfy the condition.
+#
+# Return the answer with the smaller index first.
+# @hint
+# Try using a hash map: as you scan the array, check whether the
+# complement (target minus the current number) has already been seen
+# before you add the current number to the map.
+# @solution:Junior
+
+def two_sum(nums, target):
+    # Maps a number we've already scanned to the index where it was
+    # found, so we can look it back up in O(1) instead of scanning
+    # again.
+    seen = {}
+
+    for i in range(len(nums)):
+        current_number = nums[i]
+        # This is the value we'd need from an earlier position to
+        # hit the target together with current_number.
+        complement = target - current_number
+
+        if complement in seen:
+            # complement was added on an earlier loop, so its index
+            # is always smaller than i — this already returns the
+            # smaller index first.
+            j = seen[complement]
+            return [j, i]
+
+        # No match yet, so remember this number for a later lookup.
+        seen[current_number] = i
+
+    return []
+
+# @solution:Senior
+
+def two_sum(nums, target):
+    seen = {}  # number -> index, filled in as we scan
+
+    for i, n in enumerate(nums):
+        # Walrus operator: look up the complement and bind it to j
+        # in the same expression, then check it was actually found.
+        if (j := seen.get(target - n)) is not None:
+            return [j, i]  # j was inserted earlier, so it's the smaller index
+        seen[n] = i
+
+    return []
+
+# @explanation
+# Both versions use the same O(n) one-pass hash map approach: walk
+# the array once, and before adding the current number to the map,
+# check whether its complement (target minus the current number) is
+# already in there.
+#
+# Since the complement can only be in the map if it was added on an
+# earlier iteration, the index we find for it (j) is always smaller
+# than the current index (i), so returning [j, i] already satisfies
+# "smaller index first" for free, with no extra comparison needed.
+#
+# The Junior version spells out each step with explicit variable
+# names and an if-shaped check. The Senior version reaches for
+# enumerate() instead of manual indexing, and the walrus operator
+# (:=) to look up and bind the complement in the same expression —
+# same algorithm, same time and space complexity, fewer lines.

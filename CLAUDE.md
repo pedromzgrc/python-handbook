@@ -119,6 +119,43 @@ Key rules for this format (different from chapters — don't mix them up):
 - Multiple exercises can live in one category file; just repeat the
   `# --- Title ---` block. They render in file order.
 
+### Multiple solution styles (tabs)
+
+An exercise can show more than one way to write the *same* optimal
+solution — e.g. a plain-Python "Junior" version next to a terser
+"Senior" one — by giving `@solution` a label and repeating the marker:
+
+```python
+# @solution:Junior
+
+def solution_function(...):
+    ...  # written the long way, in-code comments explaining each step
+
+# @solution:Senior
+
+def solution_function(...):
+    ...  # same approach, shorter syntax
+```
+
+- The label (`Junior`, `Senior`, or anything else, no spaces) becomes
+  the tab's display text and its CSS id (`tab-<exercise-slug>-<label
+  lowercased>`), so keep labels short and single-word.
+- Renders as CSS-only tabs (`solution-tabs` class in `style.css`):
+  radio inputs + labels toggle visibility via `:checked` and
+  `:nth-of-type`/`:nth-child` position matching — **no JS**, consistent
+  with the rest of the app. This means the CSS is generic (not
+  per-exercise), so no template/stylesheet changes are needed to add a
+  new tabbed exercise; just repeat the `@solution:<label>` pattern.
+- A plain `@solution` (no `:label`) still works exactly as before and
+  renders as a single, un-tabbed code block — labels are opt-in.
+- `@explanation` stays a single shared section below the tabs (not
+  per-tab) — when solutions differ only in *style*, one explanation
+  covering both is enough; lean on in-code comments inside each
+  `@solution:<label>` block to explain what's specific to that style.
+- `exercise["code"]` is always an alias for the first solution's code
+  (`exercise["solutions"][0]["code"]`), so anything that only knows
+  about a single solution keeps working unchanged.
+
 ### Adding a new exercise — checklist
 
 1. Pick the right category file under `interview_questions/`.
