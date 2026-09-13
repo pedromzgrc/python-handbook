@@ -1,19 +1,36 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Python Cheat Sheet{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='pygments.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='pygments.css') }}" id="pygments-light">
+    <link rel="stylesheet" href="{{ url_for('static', filename='pygments-dark.css') }}" id="pygments-dark" disabled>
+    <script>
+        const storedTheme = localStorage.getItem('theme') || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        if (storedTheme) {
+            document.documentElement.setAttribute('data-theme', storedTheme);
+            if (storedTheme === 'dark') {
+                document.getElementById('pygments-light').disabled = true;
+                document.getElementById('pygments-dark').disabled = false;
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="layout">
         <aside class="sidebar">
-            <a class="sidebar-logo" href="{{ url_for('index') }}">
-                <span class="sidebar-logo-icon">🐍</span>
-                <span class="sidebar-logo-text">Python<br>Cheat Sheet</span>
-            </a>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-right: 24px;">
+                <a class="sidebar-logo" href="{{ url_for('index') }}" style="border-bottom: none; padding-right: 0; margin-bottom: 0;">
+                    <span class="sidebar-logo-icon">🐍</span>
+                    <span class="sidebar-logo-text">Python<br>Cheat Sheet</span>
+                </a>
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Dark Mode" style="margin-top: 24px; background: none; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; color: white; cursor: pointer; padding: 4px 8px; font-size: 14px;">
+                    🌓
+                </button>
+            </div>
+            <div style="border-bottom: 1px solid rgba(255, 255, 255, 0.2); margin: 0 24px 16px;"></div>
 
             <nav class="sidebar-nav">
                 <details class="nav-group" {% if unit or (not unit and not category) %}open{% endif %}>
@@ -75,5 +92,69 @@
             {% block content %}{% endblock %}
         </main>
     </div>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const pygmentsLight = document.getElementById('pygments-light');
+        const pygmentsDark = document.getElementById('pygments-dark');
+
+        // Copy to clipboard functionality
+        document.querySelectorAll('.codehilite').forEach((block) => {
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.textContent = 'Copy';
+            btn.setAttribute('aria-label', 'Copy code to clipboard');
+
+            // The code is usually in `.codehilite pre code` or similar.
+            // When line numbers are enabled, it's inside a table: `.codehilite .code pre code`
+            btn.addEventListener('click', () => {
+                const codeNode = block.querySelector('.code pre code') || block.querySelector('pre code');
+                if (codeNode) {
+                    navigator.clipboard.writeText(codeNode.textContent).then(() => {
+                        btn.textContent = 'Copied!';
+                        setTimeout(() => btn.textContent = 'Copy', 2000);
+                    });
+                }
+            });
+            block.style.position = 'relative';
+            block.appendChild(btn);
+        });
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            if (newTheme === 'dark') {
+                pygmentsLight.disabled = true;
+                pygmentsDark.disabled = false;
+            } else {
+                pygmentsLight.disabled = false;
+                pygmentsDark.disabled = true;
+            }
+        });
+    </script>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+          startOnLoad: true,
+          theme: isDark ? 'dark' : 'default'
+      });
+
+      // Simple observer to re-render mermaid when theme changes
+      const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+              if (mutation.attributeName === 'data-theme') {
+                  window.location.reload();
+              }
+          });
+      });
+      observer.observe(document.documentElement, { attributes: true });
+    </script>
 </body>
 </html>
