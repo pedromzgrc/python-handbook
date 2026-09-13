@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='pygments.css') }}" id="pygments-light">
     <link rel="stylesheet" href="{{ url_for('static', filename='pygments-dark.css') }}" id="pygments-dark" disabled>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         const storedTheme = localStorage.getItem('theme') || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
         if (storedTheme) {
@@ -23,11 +24,11 @@
         <aside class="sidebar">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-right: 24px;">
                 <a class="sidebar-logo" href="{{ url_for('index') }}" style="border-bottom: none; padding-right: 0; margin-bottom: 0;">
-                    <span class="sidebar-logo-icon">🐍</span>
+                    <span class="sidebar-logo-icon"><i data-lucide="code-2" style="width: 28px; height: 28px;"></i></span>
                     <span class="sidebar-logo-text">Python<br>Cheat Sheet</span>
                 </a>
                 <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Dark Mode" style="margin-top: 24px; background: none; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; color: white; cursor: pointer; padding: 4px 8px; font-size: 14px;">
-                    🌓
+                    <i data-lucide="moon" style="width: 18px; height: 18px;"></i>
                 </button>
             </div>
             <div style="border-bottom: 1px solid rgba(255, 255, 255, 0.2); margin: 0 24px 16px;"></div>
@@ -94,7 +95,16 @@
     </div>
 
     <script>
+        lucide.createIcons();
         const themeToggle = document.getElementById('theme-toggle');
+
+        // Sync initial icon
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+            themeToggle.innerHTML = '<i data-lucide="sun" style="width: 18px; height: 18px;"></i>';
+            lucide.createIcons();
+        }
+
         const pygmentsLight = document.getElementById('pygments-light');
         const pygmentsDark = document.getElementById('pygments-dark');
 
@@ -130,10 +140,13 @@
             if (newTheme === 'dark') {
                 pygmentsLight.disabled = true;
                 pygmentsDark.disabled = false;
+                themeToggle.innerHTML = '<i data-lucide="sun" style="width: 18px; height: 18px;"></i>';
             } else {
                 pygmentsLight.disabled = false;
                 pygmentsDark.disabled = true;
+                themeToggle.innerHTML = '<i data-lucide="moon" style="width: 18px; height: 18px;"></i>';
             }
+            lucide.createIcons();
         });
     </script>
 
