@@ -9,8 +9,8 @@ from interview_loader import load_categories
 
 app = Flask(__name__)
 
-MARKDOWN_EXTENSIONS = ["fenced_code", "codehilite", "tables", "attr_list"]
-MARKDOWN_EXTENSION_CONFIGS = {"codehilite": {"guess_lang": False}}
+MARKDOWN_EXTENSIONS = ["fenced_code", "codehilite", "tables", "attr_list", "mdx_mermaid"]
+MARKDOWN_EXTENSION_CONFIGS = {"codehilite": {"guess_lang": False, "linenums": True}}
 
 
 def render_unit_markdown(unit):
