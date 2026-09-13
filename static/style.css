@@ -7,6 +7,23 @@
     --border: #e7e2df;
     --chip-bg: #f1eeec;
     --code-bg: #f6f2ef;
+    --bg-color: var(--sidebar-text);
+    --sidebar-bg: var(--red);
+    --sidebar-text: #fff;
+}
+
+[data-theme="dark"] {
+    --red: #c43e2e;
+    --red-dark: #a03225;
+    --red-highlight: #db4a39;
+    --ink: #e0e0e0;
+    --muted: #a0a0a0;
+    --border: #444;
+    --chip-bg: #2a2a2a;
+    --code-bg: #1e1e1e;
+    --bg-color: #121212;
+    --sidebar-bg: #1a1a1a;
+    --sidebar-text: #e0e0e0;
 }
 
 * {
@@ -17,7 +34,7 @@ body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
     color: var(--ink);
-    background: #fff;
+    background: var(--bg-color);
 }
 
 .layout {
@@ -30,8 +47,8 @@ body {
 .sidebar {
     width: 270px;
     flex-shrink: 0;
-    background: var(--red);
-    color: #fff;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
     padding: 24px 0 40px;
     position: sticky;
     top: 0;
@@ -46,7 +63,7 @@ body {
     gap: 12px;
     padding: 0 24px 24px;
     text-decoration: none;
-    color: #fff;
+    color: var(--sidebar-text);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     margin-bottom: 16px;
 }
@@ -118,7 +135,7 @@ body {
 
 .unit-link.active {
     background: var(--red-highlight);
-    color: #fff;
+    color: var(--sidebar-text);
     font-weight: 700;
 }
 
@@ -152,7 +169,7 @@ body {
 }
 
 .module-list li a:hover {
-    color: #fff;
+    color: var(--sidebar-text);
     text-decoration: underline;
 }
 
@@ -355,7 +372,7 @@ body {
 
 .tab-input:checked + .tab-label {
     color: var(--red-dark);
-    background: #fff;
+    background: var(--bg-color);
     border-color: var(--border);
     position: relative;
     top: 1px;
@@ -437,4 +454,65 @@ body {
 .index-card-count {
     font-size: 12px;
     color: var(--muted);
+}
+
+/* Copy button */
+.copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    background: var(--chip-bg);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s, background-color 0.2s;
+    user-select: none;
+}
+
+.codehilite:hover .copy-btn {
+    opacity: 1;
+}
+
+.copy-btn:hover {
+    background: var(--bg-color);
+    color: var(--ink);
+}
+
+.copy-btn:active {
+    transform: scale(0.95);
+}
+
+/* Line numbers */
+.codehilitetable {
+    width: 100%;
+}
+
+.codehilitetable .linenos {
+    width: 30px;
+    padding-right: 10px;
+    text-align: right;
+    color: var(--muted);
+    border-right: 1px solid var(--border);
+    user-select: none;
+    opacity: 0.5;
+}
+
+.codehilitetable .code {
+    padding-left: 10px;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+    background: var(--bg-color);
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 12px 0;
+    display: flex;
+    justify-content: center;
 }
