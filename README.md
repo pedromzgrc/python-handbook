@@ -1,4 +1,4 @@
-# Python Handbook
+# 🐍 Python Handbook
 
 A small Flask app that turns plain `.py` files into a browsable, styled
 cheat sheet — no CMS, no database, no hand-written HTML for content.
