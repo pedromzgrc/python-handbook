@@ -1,6 +1,7 @@
 """Flask app that turns the numbered chapter .py files in this project
 into a browsable cheat sheet: a sidebar lists every unit, and clicking one
 renders its modules as Markdown (theory + fenced code snippets)."""
+import html
 import markdown
 from flask import Flask, abort, render_template
 
@@ -56,13 +57,15 @@ def _render_solution_body(exercise):
     inputs_and_labels = []
     panels = []
     for index, solution in enumerate(solutions):
-        input_id = f"tab-{exercise['slug']}-{solution['slug']}"
+        input_id = html.escape(f"tab-{exercise['slug']}-{solution['slug']}")
         code_html = _render_markdown(f"```python\n{solution['code']}\n```")
         checked = " checked" if index == 0 else ""
+        esc_exercise_slug = html.escape(exercise["slug"])
+        esc_label = html.escape(solution["label"])
         inputs_and_labels.append(
-            f'<input type="radio" name="tabs-{exercise["slug"]}" id="{input_id}" '
+            f'<input type="radio" name="tabs-{esc_exercise_slug}" id="{input_id}" '
             f'class="tab-input"{checked}>'
-            f'<label for="{input_id}" class="tab-label">{solution["label"]}</label>'
+            f'<label for="{input_id}" class="tab-label">{esc_label}</label>'
         )
         panels.append(f'<div class="tab-panel">{code_html}</div>')
 
