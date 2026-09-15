@@ -154,4 +154,4 @@ def category_detail(slug):
 if __name__ == "__main__":
     # Port 5000 is taken by macOS's AirPlay Receiver (Control Center), so
     # this runs on 5001 instead to avoid clashing with it.
-    app.run(debug=True, port=5001)
+    app.run(debug=False, port=5001)
