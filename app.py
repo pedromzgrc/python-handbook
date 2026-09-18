@@ -3,6 +3,7 @@ into a browsable cheat sheet: a sidebar lists every unit, and clicking one
 renders its modules as Markdown (theory + fenced code snippets)."""
 import html
 import markdown
+import bleach
 from flask import Flask, abort, render_template
 
 from content_loader import load_units
@@ -12,6 +13,20 @@ app = Flask(__name__)
 
 MARKDOWN_EXTENSIONS = ["fenced_code", "codehilite", "tables", "attr_list", "mdx_mermaid"]
 MARKDOWN_EXTENSION_CONFIGS = {"codehilite": {"guess_lang": False, "linenums": True}}
+
+ALLOWED_TAGS = [
+    "h1", "h2", "h3", "h4", "h5", "h6",
+    "p", "a", "strong", "em", "code", "pre", "blockquote",
+    "ul", "ol", "li",
+    "table", "thead", "tbody", "tr", "th", "td",
+    "div", "span", "br", "hr", "img"
+]
+
+ALLOWED_ATTRIBUTES = {
+    "*": ["id", "class"],
+    "a": ["href", "title"],
+    "img": ["src", "alt", "title"],
+}
 
 
 def render_unit_markdown(unit):
@@ -30,10 +45,15 @@ def render_unit_markdown(unit):
 
 
 def _render_markdown(document):
-    return markdown.markdown(
+    html_content = markdown.markdown(
         document,
         extensions=MARKDOWN_EXTENSIONS,
         extension_configs=MARKDOWN_EXTENSION_CONFIGS,
+    )
+    return bleach.clean(
+        html_content,
+        tags=ALLOWED_TAGS,
+        attributes=ALLOWED_ATTRIBUTES,
     )
 
 
