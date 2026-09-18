@@ -87,10 +87,3 @@ def load_units():
         )
     units.sort(key=lambda unit: unit["number"])
     return units
-
-
-def get_unit(slug):
-    for unit in load_units():
-        if unit["slug"] == slug:
-            return unit
-    return None
