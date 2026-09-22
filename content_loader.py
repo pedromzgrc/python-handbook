@@ -2,6 +2,7 @@
 the Flask app can render, so the cheat sheet content lives in one place:
 the Python files themselves.
 """
+import functools
 import re
 from pathlib import Path
 
@@ -59,6 +60,7 @@ def _parse_modules(body_lines):
     return modules
 
 
+@functools.lru_cache()
 def load_units():
     """Reads every NN_name.py file in units/ and returns a list of unit
     dicts, ordered by their numeric prefix."""
