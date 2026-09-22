@@ -51,6 +51,7 @@ render_category_markdown / _render_solution_body in app.py). A plain
 single, un-tabbed code block — labels are opt-in, only needed when an
 exercise wants to show more than one style side by side.
 """
+import functools
 import re
 from pathlib import Path
 
@@ -155,6 +156,7 @@ def _parse_exercises(body_lines):
     return exercises
 
 
+@functools.lru_cache()
 def load_categories():
     """Reads every NN_name.py file in interview_questions/ and returns a
     list of category dicts, ordered by their numeric prefix."""
