@@ -113,25 +113,25 @@ def render_category_markdown(category):
     return "\n".join(blocks)
 
 
+_UNITS = load_units()
+_CATEGORIES = load_categories()
+
+
 @app.route("/")
 def index():
-    units = load_units()
-    categories = load_categories()
-    return render_template("index.html", units=units, categories=categories)
+    return render_template("index.html", units=_UNITS, categories=_CATEGORIES)
 
 
 @app.route("/unit/<slug>")
 def unit_detail(slug):
-    units = load_units()
-    categories = load_categories()
-    unit = next((u for u in units if u["slug"] == slug), None)
+    unit = next((u for u in _UNITS if u["slug"] == slug), None)
     if unit is None:
         abort(404)
     content_html = render_unit_markdown(unit)
     return render_template(
         "unit.html",
-        units=units,
-        categories=categories,
+        units=_UNITS,
+        categories=_CATEGORIES,
         unit=unit,
         content_html=content_html,
     )
@@ -139,16 +139,14 @@ def unit_detail(slug):
 
 @app.route("/interview/<slug>")
 def category_detail(slug):
-    units = load_units()
-    categories = load_categories()
-    category = next((c for c in categories if c["slug"] == slug), None)
+    category = next((c for c in _CATEGORIES if c["slug"] == slug), None)
     if category is None:
         abort(404)
     content_html = render_category_markdown(category) if category["exercises"] else ""
     return render_template(
         "category.html",
-        units=units,
-        categories=categories,
+        units=_UNITS,
+        categories=_CATEGORIES,
         category=category,
         content_html=content_html,
     )
