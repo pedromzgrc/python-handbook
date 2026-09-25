@@ -62,30 +62,6 @@ def test_parse_modules_extra_newlines():
     assert len(modules) == 1
     assert modules[0]["code"] == "x = 1"
 
-def test_parse_modules_ignore_pre_header_content():
-    body = [
-        "This is some extra stuff before the first header",
-        "# that should just be ignored",
-        "# --- The Real Module ---",
-        "# Theory: It works.",
-        "x = 1"
-    ]
-    modules = _parse_modules(body)
-    assert len(modules) == 1
-    assert modules[0]["title"] == "The Real Module"
-    assert modules[0]["theory"] == "It works."
-    assert modules[0]["code"] == "x = 1"
-
-def test_parse_modules_empty_header_only():
-    body = [
-        "# --- Empty Module ---"
-    ]
-    modules = _parse_modules(body)
-    assert len(modules) == 1
-    assert modules[0]["title"] == "Empty Module"
-    assert modules[0]["theory"] == ""
-    assert modules[0]["code"] == ""
-
 @pytest.fixture(autouse=True)
 def clear_lru_cache():
     """Clear the LRU cache on load_units before each test."""
@@ -148,3 +124,27 @@ def test_load_units_ordering(monkeypatch, tmp_path):
     assert units[0]["number"] == 2
     assert units[1]["number"] == 5
     assert units[2]["number"] == 10
+
+def test_parse_modules_ignore_pre_header_content():
+    body = [
+        "This is some extra stuff before the first header",
+        "# that should just be ignored",
+        "# --- The Real Module ---",
+        "# Theory: It works.",
+        "x = 1"
+    ]
+    modules = _parse_modules(body)
+    assert len(modules) == 1
+    assert modules[0]["title"] == "The Real Module"
+    assert modules[0]["theory"] == "It works."
+    assert modules[0]["code"] == "x = 1"
+
+def test_parse_modules_empty_header_only():
+    body = [
+        "# --- Empty Module ---"
+    ]
+    modules = _parse_modules(body)
+    assert len(modules) == 1
+    assert modules[0]["title"] == "Empty Module"
+    assert modules[0]["theory"] == ""
+    assert modules[0]["code"] == ""
