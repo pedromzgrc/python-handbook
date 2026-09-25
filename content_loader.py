@@ -6,15 +6,13 @@ import functools
 import re
 from pathlib import Path
 
+from utils import slugify
+
 CONTENT_DIR = Path(__file__).parent / "units"
 CHAPTER_FILE_PATTERN = re.compile(r"^(\d+)_(.+)\.py$")
 CHAPTER_TITLE_PATTERN = re.compile(r"^#\s*Chapter\s*\d+:\s*(.+)$")
 MODULE_HEADER_PATTERN = re.compile(r"^#\s*---\s*(.+?)\s*---\s*$")
 THEORY_PATTERN = re.compile(r"^#\s*Theory:\s*(.+)$")
-
-
-def _slugify(name: str) -> str:
-    return name.lower().replace(" ", "-")
 
 
 def _parse_modules(body_lines):
@@ -42,7 +40,7 @@ def _parse_modules(body_lines):
         modules.append(
             {
                 "title": current_title,
-                "slug": _slugify(current_title),
+                "slug": slugify(current_title),
                 "theory": theory,
                 "code": "\n".join(code_lines),
             }
