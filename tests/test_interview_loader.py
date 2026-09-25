@@ -1,4 +1,3 @@
-import pytest
 from pathlib import Path
 from interview_loader import (
     _prose,
