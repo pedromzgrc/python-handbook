@@ -1,7 +1,6 @@
 import pytest
 from pathlib import Path
 from interview_loader import (
-    _slugify,
     _prose,
     _trim_blank_lines,
     _parse_exercises,
@@ -9,11 +8,6 @@ from interview_loader import (
     get_category,
 )
 import interview_loader
-
-def test_slugify():
-    assert _slugify("Arrays and Hashing") == "arrays-and-hashing"
-    assert _slugify("Two Sum") == "two-sum"
-    assert _slugify("") == ""
 
 def test_prose():
     lines = [

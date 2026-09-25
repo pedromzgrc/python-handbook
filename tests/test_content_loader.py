@@ -1,13 +1,7 @@
 import pytest
 from pathlib import Path
 import content_loader
-from content_loader import _slugify, _parse_modules, load_units
-
-def test_slugify():
-    assert _slugify("Hello World") == "hello-world"
-    assert _slugify("Test") == "test"
-    assert _slugify("A B C") == "a-b-c"
-    assert _slugify("") == ""
+from content_loader import _parse_modules, load_units
 
 def test_parse_modules_basic():
     body_lines = [

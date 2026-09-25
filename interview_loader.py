@@ -55,6 +55,8 @@ import functools
 import re
 from pathlib import Path
 
+from utils import slugify
+
 CONTENT_DIR = Path(__file__).parent / "interview_questions"
 CATEGORY_FILE_PATTERN = re.compile(r"^(\d+)_(.+)\.py$")
 CATEGORY_TITLE_PATTERN = re.compile(r"^#\s*Category:\s*(.+)$")
@@ -63,10 +65,6 @@ DIFFICULTY_PATTERN = re.compile(r"^#\s*Difficulty:\s*(.+)$")
 SECTION_MARKER_PATTERN = re.compile(
     r"^#\s*@(problem|hint|solution|explanation)(?::([^\s]+))?\s*$"
 )
-
-
-def _slugify(name: str) -> str:
-    return name.lower().replace(" ", "-")
 
 
 def _prose(lines):
@@ -134,7 +132,7 @@ def _parse_exercises(body_lines):
         exercises.append(
             {
                 "title": current_title,
-                "slug": _slugify(current_title),
+                "slug": slugify(current_title),
                 "difficulty": difficulty,
                 "problem": _prose(sections["problem"]),
                 "hint": _prose(sections["hint"]),
