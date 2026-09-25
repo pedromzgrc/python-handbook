@@ -137,9 +137,16 @@ _UNITS = load_units()
 _CATEGORIES = load_categories()
 
 
+@app.context_processor
+def inject_globals():
+    """Make loaded content globally available in all templates to DRY up
+    route handlers."""
+    return {"units": _UNITS, "categories": _CATEGORIES}
+
+
 @app.route("/")
 def index():
-    return render_template("index.html", units=_UNITS, categories=_CATEGORIES)
+    return render_template("index.html")
 
 
 @app.route("/unit/<slug>")
@@ -150,8 +157,6 @@ def unit_detail(slug):
     content_html = render_unit_markdown(unit)
     return render_template(
         "unit.html",
-        units=_UNITS,
-        categories=_CATEGORIES,
         unit=unit,
         content_html=content_html,
     )
@@ -165,8 +170,6 @@ def category_detail(slug):
     content_html = render_category_markdown(category) if category["exercises"] else ""
     return render_template(
         "category.html",
-        units=_UNITS,
-        categories=_CATEGORIES,
         category=category,
         content_html=content_html,
     )
